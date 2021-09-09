@@ -18,29 +18,21 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
-//! ravalione - easy project templates
+use std::fmt::Display;
 
-#![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]
+#[derive(Debug)]
 
-/// File operations
-pub mod file;
+/// Error Types for file operations, parsing, output and more.
+pub enum RlError {
+    /// Rl Instruction file was not found or failed to read.
+    RlInstructionFile(String),
+}
 
-/// Error enums for Result
-pub mod error;
-
-use error::RlError;
-use file::read_ravalione_instructions;
-
-/// Main Executor
-pub fn run() -> Result<(), RlError> {
-    println!("ravalione");
-
-    let file = match read_ravalione_instructions(None) {
-        Ok(file) => file,
-        Err(why) => return Err(why),
-    };
-
-    println!("{}", file);
-
-    Ok(())
+impl Display for RlError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let (rl_error_type, rl_error_msg) = match self {
+            RlError::RlInstructionFile(e) => ("INSTRUCTION FILE", e),
+        };
+        write!(f, "[{}]: {}", rl_error_type, rl_error_msg)
+    }
 }
