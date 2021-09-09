@@ -26,12 +26,27 @@ use std::{
 use crate::error::RlError;
 
 /// Read ravalione instruction file
-/// Provided path takes importance over the others. If not provided, its taken from [".ravalione","ravalione.rc",".rli",".rlrc"]
 pub fn read_ravalione_instructions(path: Option<PathBuf>) -> Result<String, RlError> {
+    let file_path = match get_rl_instructions_file_path(path) {
+        Err(why) => return Err(why),
+        Ok(fp) => fp,
+    };
+
+    match read_to_string(&file_path) {
+        Ok(file) => Ok(file),
+        Err(_) => {
+            let err_msg = format!("Failed to read instruction file at {:?}", file_path);
+            Err(RlError::RlInstructionFile(err_msg))
+        }
+    }
+}
+
+/// Provided path takes importance over the others. If not provided, its taken from [".ravalione","ravalione.rc",".rli",".rlrc"]
+pub fn get_rl_instructions_file_path(path: Option<PathBuf>) -> Result<PathBuf, RlError> {
     const FILE_LIST: [&str; 4] = [".ravalione", "ravalione.rc", ".rli", ".rlrc"];
 
-    let file_path = if let Some(path) = path {
-        path
+    if let Some(path) = path {
+        Ok(path)
     } else {
         let mut final_path = None;
         for file in FILE_LIST {
@@ -48,15 +63,7 @@ Could not find .ravalione ravalione.rc .rli .rlrc"
                         .to_string(),
                 ));
             }
-            Some(path) => PathBuf::from(path),
-        }
-    };
-
-    match read_to_string(&file_path) {
-        Ok(file) => Ok(file),
-        Err(_) => {
-            let err_msg = format!("Failed to read instruction file at {:?}", file_path);
-            Err(RlError::RlInstructionFile(err_msg))
+            Some(path) => Ok(PathBuf::from(path)),
         }
     }
 }
