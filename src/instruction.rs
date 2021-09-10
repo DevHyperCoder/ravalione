@@ -18,7 +18,12 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
-use crate::{RlError, cmd::{echo::echo, error::error}, parser::RLParser, parser::Rule};
+use crate::{
+    cmd::{echo::echo, error::error, touch::touch},
+    parser::RLParser,
+    parser::Rule,
+    RlError,
+};
 use pest::Parser;
 
 /// Instruction with params
@@ -30,6 +35,9 @@ pub enum RlInstruction<'a> {
 
     /// Error Instruction. Prints param* to stderr
     Error(Vec<&'a str>),
+
+    /// UNIX `touch` command. Creates param* files
+    Touch(Vec<&'a str>),
 }
 
 impl RlInstruction<'_> {
@@ -37,12 +45,9 @@ impl RlInstruction<'_> {
     /// cmd module contains submodules for supported instructions.
     pub fn execute(self) -> Result<(), RlError> {
         match self {
-            RlInstruction::Echo(params) => {
-                 echo(params)
-            },
-            RlInstruction::Error(params) => {
-                 error(params)
-            }
+            RlInstruction::Echo(params) => echo(params),
+            RlInstruction::Error(params) => error(params),
+            RlInstruction::Touch(params) => touch(params),
         }
     }
 
@@ -53,6 +58,7 @@ impl RlInstruction<'_> {
         match cmd {
             "ECHO" => Ok(RlInstruction::Echo(params)),
             "ERROR" => Ok(RlInstruction::Error(params)),
+            "TOUCH" => Ok(RlInstruction::Touch(params)),
             _ => Err(RlError::RlCommandNotFound(format!(
                 "Could not find command {}.",
                 cmd
@@ -71,26 +77,26 @@ impl RlInstruction<'_> {
                 let mut rl_instructions = vec![];
                 let parse = parse.next().unwrap();
                 for line in parse.into_inner() {
-                    if  line.as_rule()  == Rule::cmd_statement  {
-                            let mut inner_rule = line.into_inner();
+                    if line.as_rule() == Rule::cmd_statement {
+                        let mut inner_rule = line.into_inner();
 
-                            let cmd = inner_rule.next().unwrap().as_str();
+                        let cmd = inner_rule.next().unwrap().as_str();
 
-                            let mut params = vec![];
+                        let mut params = vec![];
 
-                            for param in inner_rule {
-                                params.push(param.as_str())
-                            }
+                        for param in inner_rule {
+                            params.push(param.as_str())
+                        }
 
-                            match RlInstruction::get_rl_instruction(cmd, params) {
-                                Err(e) => return Err(e),
-                                Ok(cmd) => rl_instructions.push(cmd),
-                            }
+                        match RlInstruction::get_rl_instruction(cmd, params) {
+                            Err(e) => return Err(e),
+                            Ok(cmd) => rl_instructions.push(cmd),
+                        }
                     }
                 }
                 Ok(rl_instructions)
             }
-            Err(why) =>  Err(RlError::RLInstructionParse(why.to_string())),
+            Err(why) => Err(RlError::RLInstructionParse(why.to_string())),
         }
     }
 }

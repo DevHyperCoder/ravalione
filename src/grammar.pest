@@ -3,8 +3,9 @@ char = { ASCII_ALPHANUMERIC | "." | "/" | "_" | "-" }
 param = { char+ }
 
 cmd = {
-    "ECHO" |
-    "ERROR"
+    "ECHO"  |
+    "ERROR" |
+    "TOUCH"
 }
 
 cmd_statement = { cmd+ ~ (" " ~ param)* }

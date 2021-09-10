@@ -32,6 +32,9 @@ pub enum RlError {
 
     /// Provided command was not found
     RlCommandNotFound(String),
+
+    /// fs error
+    RlFs(String),
 }
 
 impl Display for RlError {
@@ -40,6 +43,7 @@ impl Display for RlError {
             RlError::RlInstructionFile(e) => ("INSTRUCTION FILE", e),
             RlError::RLInstructionParse(e) => ("PARSE", e),
             RlError::RlCommandNotFound(e) => ("CMD", e),
+            RlError::RlFs(e) => ("FS", e),
         };
         write!(f, "[{}]: {}", rl_error_type, rl_error_msg)
     }
