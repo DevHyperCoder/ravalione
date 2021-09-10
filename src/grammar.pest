@@ -3,6 +3,7 @@ char = { ASCII_ALPHANUMERIC | "." | "/" | "_" | "-" }
 param = { char+ }
 
 cmd = {
+    "CP"    |
     "ECHO"  |
     "ERROR" |
     "TOUCH"

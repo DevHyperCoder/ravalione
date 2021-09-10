@@ -26,3 +26,6 @@ pub mod error;
 
 /// TOUCH param*
 pub mod touch;
+
+/// CP param0 param1
+pub mod cp;
