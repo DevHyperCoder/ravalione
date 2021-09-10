@@ -1,5 +1,3 @@
-use crate::error::RlError;
-
 /*
  *    ravalione - easy project templates
  *    Copyright (C) 2021 DevHyperCoder
@@ -19,6 +17,8 @@ use crate::error::RlError;
  *
  *    Contact the author: <devan at devhypercoder dot com>
  */
+
+use crate::error::RlError;
 
 /// Prints all params to stdout
 pub fn echo(params: Vec<&str>) -> Result<(),RlError> {
