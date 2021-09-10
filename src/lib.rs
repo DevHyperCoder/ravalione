@@ -22,14 +22,29 @@
 
 #![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]
 
+#[macro_use]
+extern crate pest_derive;
+
+/// Instruction file parser
+#[allow(missing_docs)]
+pub mod parser;
+
 /// File operations
 pub mod file;
 
 /// Error enums for Result
 pub mod error;
 
+/// Instruction handler and executor
+pub mod instruction;
+
+/// Command functions ie echo, cp etc
+pub mod cmd;
+
 use error::RlError;
 use file::read_ravalione_instructions;
+
+use crate::instruction::RlInstruction;
 
 /// Main Executor
 pub fn run() -> Result<(), RlError> {
@@ -40,7 +55,16 @@ pub fn run() -> Result<(), RlError> {
         Err(why) => return Err(why),
     };
 
-    println!("{}", file);
+     match RlInstruction::parse_rl_instructions(&file) {
+         Ok(instructions) => {
+             for instr in instructions {
+                 if let Err(e) = instr.execute(){
+                     return Err(e)
+                 }
+             }
+         },
+         Err(why) => return Err(why)
+     }
 
     Ok(())
 }

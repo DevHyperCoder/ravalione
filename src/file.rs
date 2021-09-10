@@ -43,6 +43,7 @@ pub fn read_ravalione_instructions(path: Option<PathBuf>) -> Result<String, RlEr
 
 /// Provided path takes importance over the others. If not provided, its taken from [".ravalione","ravalione.rc",".rli",".rlrc"]
 pub fn get_rl_instructions_file_path(path: Option<PathBuf>) -> Result<PathBuf, RlError> {
+    // Supported file list
     const FILE_LIST: [&str; 4] = [".ravalione", "ravalione.rc", ".rli", ".rlrc"];
 
     if let Some(path) = path {
@@ -51,17 +52,18 @@ pub fn get_rl_instructions_file_path(path: Option<PathBuf>) -> Result<PathBuf, R
         let mut final_path = None;
         for file in FILE_LIST {
             if Path::new(file).exists() {
-                final_path = Some(file)
+                final_path = Some(file);
+                break
             }
         }
 
         match final_path {
             None => {
-                return Err(RlError::RlInstructionFile(
+                 Err(RlError::RlInstructionFile(
                     "Failed to find instruction file.
 Could not find .ravalione ravalione.rc .rli .rlrc"
                         .to_string(),
-                ));
+                ))
             }
             Some(path) => Ok(PathBuf::from(path)),
         }

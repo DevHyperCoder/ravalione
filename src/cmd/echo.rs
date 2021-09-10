@@ -1,3 +1,5 @@
+use crate::error::RlError;
+
 /*
  *    ravalione - easy project templates
  *    Copyright (C) 2021 DevHyperCoder
@@ -18,29 +20,8 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
-use std::fmt::Display;
-
-#[derive(Debug)]
-
-/// Error Types for file operations, parsing, output and more.
-pub enum RlError {
-    /// Rl Instruction file was not found or failed to read.
-    RlInstructionFile(String),
-
-    /// Rl Instruction Parse failed
-    RLInstructionParse(String),
-
-    /// Provided command was not found
-    RlCommandNotFound(String),
-}
-
-impl Display for RlError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let (rl_error_type, rl_error_msg) = match self {
-            RlError::RlInstructionFile(e) => ("INSTRUCTION FILE", e),
-            RlError::RLInstructionParse(e) => ("PARSE", e),
-            RlError::RlCommandNotFound(e) => ("CMD", e),
-        };
-        write!(f, "[{}]: {}", rl_error_type, rl_error_msg)
-    }
+/// Prints all params to stdout
+pub fn echo(params: Vec<&str>) -> Result<(),RlError> {
+    println!("{:?}", params);
+    Ok(())
 }

@@ -1,0 +1,12 @@
+char = { ASCII_ALPHANUMERIC | "." | "/" | "_" | "-" }
+
+param = { char+ }
+
+cmd = {
+    "ECHO" |
+    "ERROR"
+}
+
+cmd_statement = { cmd+ ~ (" " ~ param)* }
+
+main = { SOI ~ ( cmd_statement ~ ( "\n" | "\r\n" ) )*  ~ EOI }
