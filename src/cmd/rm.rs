@@ -18,20 +18,22 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
-/// ECHO param*
-pub mod echo;
+use std::fs::remove_file;
 
-/// ERROR param*
-pub mod error;
+use crate::error::RlError;
 
-/// TOUCH param*
-pub mod touch;
+/// Removes param*
+/// FS errors are returned as RlError::RlFs
+pub fn rm(params: Vec<&str>) -> Result<(), RlError> {
+    for param in params {
+        if let Err(why) = remove_file(param) {
+            return Err(RlError::RlFs(format!(
+                "Could not remove {}\n{}",
+                param,
+                why.to_string()
+            )));
+        }
+    }
 
-/// CP param0 param1
-pub mod cp;
-
-/// MV param0 param1
-pub mod mv;
-
-/// RM param*
-pub mod rm;
+    Ok(())
+}

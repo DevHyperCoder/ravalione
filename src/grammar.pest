@@ -5,6 +5,7 @@ param = { char+ }
 cmd = {
     "CP"    |
     "MV"    |
+    "RM"    |
     "ECHO"  |
     "ERROR" |
     "TOUCH"
