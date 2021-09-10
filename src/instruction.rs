@@ -19,7 +19,7 @@
  */
 
 use crate::{
-    cmd::{cp::cp, echo::echo, error::error, touch::touch},
+    cmd::{cp::cp, echo::echo, error::error, mv::mv, touch::touch},
     parser::RLParser,
     parser::Rule,
     RlError,
@@ -41,6 +41,9 @@ pub enum RlInstruction<'a> {
 
     /// UNIX `cp` command. Copies param[0] to param[1]
     Cp(Vec<&'a str>),
+
+    /// UNIX `mv` command. Moves param[0] to param[1]
+    Mv(Vec<&'a str>),
 }
 
 impl RlInstruction<'_> {
@@ -52,6 +55,7 @@ impl RlInstruction<'_> {
             RlInstruction::Error(params) => error(params),
             RlInstruction::Touch(params) => touch(params),
             RlInstruction::Cp(params) => cp(params),
+            RlInstruction::Mv(params) => mv(params),
         }
     }
 
@@ -64,6 +68,7 @@ impl RlInstruction<'_> {
             "ERROR" => Ok(RlInstruction::Error(params)),
             "TOUCH" => Ok(RlInstruction::Touch(params)),
             "CP" => Ok(RlInstruction::Cp(params)),
+            "MV" => Ok(RlInstruction::Mv(params)),
             _ => Err(RlError::RlCommandNotFound(format!(
                 "Could not find command {}.",
                 cmd
