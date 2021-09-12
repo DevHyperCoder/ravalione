@@ -18,10 +18,36 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
+use std::fs::rename;
+
 use crate::error::RlError;
 
-/// Prints all params to stdout
-pub fn echo(params: Vec<&str>) -> Result<(), RlError> {
-    println!("{:?}", params);
+/// Moves SOURCE (param[0]) to DEST (param[1])
+/// Errors if number of arguments is less than or more than 2
+/// FS errors are returned as RlError::RlFs
+pub fn mv(param: Vec<&str>) -> Result<(), RlError> {
+    if param.len() < 2 {
+        return Err(RlError::RlInsuffcientArgs(format!(
+            "MV provided with {} argument(s). Please provide SOURCE and DEST.",
+            param.len()
+        )));
+    }
+
+    if param.len() > 2 {
+        return Err(RlError::RlInsuffcientArgs(format!(
+            "MV provided with {} arguments. Please provide SOURCE and DEST.",
+            param.len()
+        )));
+    }
+
+    if let Err(why) = rename(param[0], param[1]) {
+        return Err(RlError::RlFs(format!(
+            "Could not move {} to {}\n{}",
+            param[0],
+            param[1],
+            why.to_string()
+        )));
+    }
+
     Ok(())
 }

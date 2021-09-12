@@ -18,10 +18,29 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
+use std::{fs::File, path::Path};
+
 use crate::error::RlError;
 
-/// Prints all params to stdout
-pub fn echo(params: Vec<&str>) -> Result<(), RlError> {
-    println!("{:?}", params);
+/// Equivalent to UNIX `touch` command.
+/// Creates the param* files from the current working directory
+pub fn touch(params: Vec<&str>) -> Result<(), RlError> {
+    for param in params {
+        let path = Path::new(param);
+
+        if path.exists() {
+            println!("[WARN] {} already exists! Skipping.", param);
+            continue;
+        }
+
+        if let Err(e) = File::create(path) {
+            return Err(RlError::RlFs(format!(
+                "Unable to create {}\n{}",
+                param,
+                e.to_string()
+            )));
+        }
+    }
+
     Ok(())
 }

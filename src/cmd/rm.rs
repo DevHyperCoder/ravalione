@@ -18,10 +18,33 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
+use std::{
+    fs::{remove_dir_all, remove_file},
+    path::PathBuf,
+};
+
 use crate::error::RlError;
 
-/// Prints all params to stdout
-pub fn echo(params: Vec<&str>) -> Result<(), RlError> {
-    println!("{:?}", params);
+/// Removes param*
+/// FS errors are returned as RlError::RlFs
+pub fn rm(params: Vec<&str>) -> Result<(), RlError> {
+    for param in params {
+        if let Err(why) = rm_file_or_dir(PathBuf::from(param)) {
+            return Err(RlError::RlFs(format!(
+                "Could not remove {}\n{}",
+                param,
+                why.to_string()
+            )));
+        }
+    }
+
     Ok(())
+}
+
+fn rm_file_or_dir(path: PathBuf) -> Result<(), std::io::Error> {
+    if path.is_file() {
+        remove_file(path)
+    } else {
+        remove_dir_all(path)
+    }
 }

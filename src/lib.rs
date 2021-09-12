@@ -55,16 +55,16 @@ pub fn run() -> Result<(), RlError> {
         Err(why) => return Err(why),
     };
 
-     match RlInstruction::parse_rl_instructions(&file) {
-         Ok(instructions) => {
-             for instr in instructions {
-                 if let Err(e) = instr.execute(){
-                     return Err(e)
-                 }
-             }
-         },
-         Err(why) => return Err(why)
-     }
+    match RlInstruction::parse_rl_instructions(&file) {
+        Ok(instructions) => {
+            for instr in instructions {
+                if let Err(e) = instr.execute() {
+                    return Err(e);
+                }
+            }
+        }
+        Err(why) => return Err(why),
+    }
 
     Ok(())
 }

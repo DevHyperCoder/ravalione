@@ -53,18 +53,16 @@ pub fn get_rl_instructions_file_path(path: Option<PathBuf>) -> Result<PathBuf, R
         for file in FILE_LIST {
             if Path::new(file).exists() {
                 final_path = Some(file);
-                break
+                break;
             }
         }
 
         match final_path {
-            None => {
-                 Err(RlError::RlInstructionFile(
-                    "Failed to find instruction file.
+            None => Err(RlError::RlInstructionFile(
+                "Failed to find instruction file.
 Could not find .ravalione ravalione.rc .rli .rlrc"
-                        .to_string(),
-                ))
-            }
+                    .to_string(),
+            )),
             Some(path) => Ok(PathBuf::from(path)),
         }
     }

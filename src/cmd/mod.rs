@@ -23,3 +23,15 @@ pub mod echo;
 
 /// ERROR param*
 pub mod error;
+
+/// TOUCH param*
+pub mod touch;
+
+/// CP param0 param1
+pub mod cp;
+
+/// MV param0 param1
+pub mod mv;
+
+/// RM param*
+pub mod rm;
