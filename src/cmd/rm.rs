@@ -18,7 +18,10 @@
  *    Contact the author: <devan at devhypercoder dot com>
  */
 
-use std::fs::remove_file;
+use std::{
+    fs::{remove_dir_all, remove_file},
+    path::PathBuf,
+};
 
 use crate::error::RlError;
 
@@ -26,7 +29,7 @@ use crate::error::RlError;
 /// FS errors are returned as RlError::RlFs
 pub fn rm(params: Vec<&str>) -> Result<(), RlError> {
     for param in params {
-        if let Err(why) = remove_file(param) {
+        if let Err(why) = rm_file_or_dir(PathBuf::from(param)) {
             return Err(RlError::RlFs(format!(
                 "Could not remove {}\n{}",
                 param,
@@ -36,4 +39,12 @@ pub fn rm(params: Vec<&str>) -> Result<(), RlError> {
     }
 
     Ok(())
+}
+
+fn rm_file_or_dir(path: PathBuf) -> Result<(), std::io::Error> {
+    if path.is_file() {
+        remove_file(path)
+    } else {
+        remove_dir_all(path)
+    }
 }
